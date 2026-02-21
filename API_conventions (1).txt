@@ -1,0 +1,446 @@
+SKOLA – API CONVENTIONS
+
+Status: FINAL · LOCKED · BUILD‑READY
+Applies to: All backend services
+
+1️⃣ Overview
+
+API Style: REST
+
+Base URL: /api/v1/
+
+Format: JSON only
+
+Auth: JWT (Access + Refresh)
+
+Backend: Django REST Framework
+
+Multi‑tenant: Yes (School‑scoped)
+
+2️⃣ Core Principles (NON‑NEGOTIABLE)
+
+One responsibility per endpoint
+
+No business logic in views
+
+Business logic lives in services/
+
+Serializers = validation only
+
+Permissions enforced server‑side
+
+Frontend is never trusted
+
+Soft deletes only (never hard delete)
+
+All write actions are auditable
+
+3️⃣ Authentication & IdentityAuth Endpoints
+
+POST /api/v1/auth/login/
+
+POST /api/v1/auth/refresh/
+
+POST /api/v1/auth/logout/
+
+POST /api/v1/auth/password-reset/
+
+
+Required Headers
+
+Authorization: Bearer <access_token>
+
+Content-Type: application/json
+
+
+🔐 JWT payload must include:
+
+user_id
+
+active_school_id
+
+role_codes
+
+4️⃣ Multi‑Tenancy Rule (CRITICAL)
+
+Every school‑scoped request MUST include:
+
+X-SCHOOL-ID: <school_uuid>
+
+
+Backend Must:
+
+Validate user belongs to the school
+
+Validate section access if applicable
+
+Reject cross‑school data access
+
+Return 403 FORBIDDEN on violation
+
+🚨 No default school inference allowed
+
+5️⃣ Bilingual & Section Awareness
+
+If a school is BILINGUAL:
+
+All academic endpoints must respect section_id
+
+Section filtering is mandatory for:
+
+classes
+
+subjects
+
+schemes
+
+assessments
+
+students
+
+Example:
+
+GET /api/v1/classes/?section_id=<uuid>
+
+
+6️⃣ URL & Field NamingURLs
+
+Plural nouns
+
+Kebab‑case
+
+Nouns only (no verbs)
+
+Examples:
+
+/schools/
+
+/academic-sessions/
+
+/lesson-logs/
+
+/guardian-students/
+
+
+JSON Fields
+
+snake_case only
+
+{
+
+  "academic_session": "2025/2026",
+
+  "is_locked": true
+
+}
+
+
+7️⃣ HTTP Methods & Semantics
+
+Method
+
+Usage
+
+GET
+
+Read
+
+POST
+
+Create
+
+PUT
+
+Full update
+
+PATCH
+
+Partial update
+
+DELETE
+
+Soft delete only
+
+8️⃣ Standard Response Format (MANDATORY)Success
+
+{
+
+  "success": true,
+
+  "data": {},
+
+  "message": "optional"
+
+}
+
+
+Error
+
+{
+
+  "success": false,
+
+  "error": {
+
+    "code": "PERMISSION_DENIED",
+
+    "message": "You cannot perform this action"
+
+  }
+
+}
+
+
+Validation Error
+
+{
+
+  "success": false,
+
+  "error": {
+
+    "code": "VALIDATION_ERROR",
+
+    "fields": {
+
+      "email": ["This field is required"]
+
+    }
+
+  }
+
+}
+
+
+9️⃣ Pagination (GLOBAL)
+
+All list endpoints must paginate.
+
+{
+
+  "count": 120,
+
+  "next": "/api/v1/students/?page=2",
+
+  "previous": null,
+
+  "results": []
+
+}
+
+
+🔟 Filtering, Search & Ordering
+
+Supported query params:
+
+?section_id=<uuid>
+
+?class_id=<uuid>
+
+?academic_session_id=<uuid>
+
+?search=chemistry
+
+?ordering=-created_at
+
+
+🚫 No filtering logic in frontend
+✅ Always validated backend‑side
+
+1️⃣1️⃣ Permissions ConventionPermission Code Pattern
+
+<domain>.<action>
+
+
+Examples:
+
+school.manage_users
+
+academic.enter_marks
+
+academic.approve_schemes
+
+academic.view_reports
+
+finance.manage_fees
+
+discipline.record_incident
+
+contracts.approve
+
+
+Enforcement Rules
+
+Checked in views/viewsets
+
+Never in serializers
+
+Never in frontend
+
+1️⃣2️⃣ Locking & State RulesLock Scenarios
+
+Scores locked after submission deadline
+
+Schemes locked after HOD approval
+
+Report cards locked after admin approval
+
+Contracts locked after signing
+
+Locked Response
+
+423 LOCKED
+
+
+{
+
+  "success": false,
+
+  "error": {
+
+    "code": "RESOURCE_LOCKED",
+
+    "message": "This resource is locked and cannot be modified"
+
+  }
+
+}
+
+
+1️⃣3️⃣ Parent & Guardian APIsGuardian Management
+
+POST /api/v1/guardians/
+
+POST /api/v1/guardian-students/
+
+GET  /api/v1/guardians/?student_id=
+
+
+Parent Portal Rules
+
+Parents are read‑only by default
+
+No academic write access
+
+Can view:
+
+attendance
+
+results
+
+fees
+
+discipline
+
+notifications
+
+1️⃣4️⃣ Contracts & Signatures
+
+POST /api/v1/contracts/
+
+POST /api/v1/contracts/{id}/sign/
+
+GET  /api/v1/contracts/?teacher_id=
+
+
+Signature timestamps are server‑generated
+
+Contract status immutable after SIGNED
+
+1️⃣5️⃣ File Uploads
+
+Multipart uploads only
+
+Async processing
+
+Return file ID (not raw URL)
+
+{
+
+  "file_id": "uuid"
+
+}
+
+
+1️⃣6️⃣ Audit Logging (MANDATORY)
+
+Log events on:
+
+CREATE
+
+UPDATE
+
+DELETE
+
+APPROVAL
+
+SIGN
+
+OVERRIDE
+
+Stored fields:
+
+user
+
+school
+
+action
+
+model
+
+object_id
+
+timestamp
+
+🚨 No silent writes allowed
+
+1️⃣7️⃣ Versioning Rules
+
+Versioned via URL (/v1/)
+
+No breaking changes inside same version
+
+Breaking change → new version
+
+Old versions remain supported
+
+1️⃣8️⃣ Example Endpoint Map (ALIGNED)
+
+GET  /api/v1/classes/
+
+POST /api/v1/classes/
+
+
+GET  /api/v1/subjects/?section_id=
+
+POST /api/v1/subjects/
+
+
+POST /api/v1/lesson-logs/
+
+GET  /api/v1/lesson-logs/?class_id=
+
+
+POST /api/v1/scores/
+
+POST /api/v1/scores/lock/
+
+
+POST /api/v1/report-cards/generate/
+
+POST /api/v1/report-cards/{id}/approve/
+
+
+GET  /api/v1/guardians/?student_id=
+
+GET  /api/v1/payments/?student_id=
+
+
+✅ FINAL GUARANTEES
+
+✔ Fully aligned with backend schema
+✔ Parent & guardian flows covered
+✔ Bilingual & section‑safe
+✔ Inspection‑ready
+✔ Copilot‑friendly
+✔ Zero refactor later

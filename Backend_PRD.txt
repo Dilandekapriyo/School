@@ -1,0 +1,275 @@
+# SKOLA — FINAL PRODUCT REQUIREMENTS DOCUMENT (PRD)
+
+**Status:** FINAL · LOCKED · SINGLE SOURCE OF TRUTH
+
+---
+
+## 1. PRODUCT DEFINITION
+
+SKOLA is a web‑based school management platform designed to digitally replace the official academic and administrative books used in secondary schools.
+
+It faithfully models real‑world school governance, including multiple administrators, departments, bilingual sections, inspections, and compliance requirements.
+
+SKOLA is architected to scale from a single school to thousands without structural redesign.
+
+---
+
+## 2. TARGET INSTITUTIONS
+
+- Secondary schools only
+- English, French, and Bilingual systems
+- Public and private institutions
+
+---
+
+## 3. CORE PHILOSOPHY
+
+If a school normally records it in a book, register, or official file, SKOLA must manage it digitally in a way that is:
+
+- Reliable
+- Secure
+- Auditable
+- Inspection‑ready
+
+Convenience must never compromise accountability or realism.
+
+---
+
+## 4. USER ROLES & GOVERNANCE (CRITICAL)
+
+### 4.1 Administrative Roles (Multiple per School)
+
+A school may have multiple administrators, each with scoped authority.
+
+System‑defined standard roles (permission‑based, not title‑based):
+
+- Principal (full oversight)
+- Vice Principal (academic & discipline supervision)
+- Head of Department (HOD) — per subject
+- Class Master — per class
+- Discipline Master
+- Bursar (fees & payments)
+- Academic Supervisor
+- General Administrative Staff
+
+⚠️ Titles do not grant power. Permissions do.
+
+---
+
+### 4.2 Academic & Stakeholder Roles
+
+- Teacher (subject‑ and class‑based)
+- Student (read‑only academic access)
+- Parent (multi‑child, multi‑school access)
+
+---
+
+## 5. BILINGUAL SCHOOL ARCHITECTURE (NON‑NEGOTIABLE)
+
+A school may register as:
+
+- English only
+- French only
+- Bilingual
+
+### If Bilingual
+
+The system creates two **Academic Sections**:
+- English Section
+- French Section
+
+Each section has its own:
+- Subjects
+- HODs
+- Classes
+- Schemes of work
+- Grading structures
+
+They share:
+- School identity
+- Parent accounts
+- Student identities
+- Report card authority
+- Fees system (section‑configurable if required)
+
+➡️ Academically, the system behaves like two schools.  
+➡️ Administratively, it behaves as one institution.
+
+---
+
+## 6. ACADEMIC STRUCTURE
+
+### 6.1 Academic Session
+- Year‑based (e.g. 2025/2026)
+- One active session per school at a time
+
+### 6.2 Terms & Sequences
+- Fully flexible per school
+- Supports:
+  - 1st, 2nd, 3rd Term
+  - Variable number of sequences per term (Cameroon‑style)
+
+### 6.3 Subjects
+- Defined per academic section
+- Fully customizable per school
+- Coefficients supported
+- No hard‑coded subject lists
+
+---
+
+## 7. CORE MODULES (OFFICIAL PAPERWORK REPLACEMENT)
+
+### 7.1 Scheme of Work
+- Created by HOD
+- Per subject, class, and academic session
+- Locked after approval
+- Serves as the authoritative teaching plan
+- Feeds directly into lesson tracking
+
+---
+
+### 7.2 Digital Cahier de Texte (Lesson Tracking)
+- Lessons logged against approved schemes of work
+- Status options:
+  - Taught
+  - Partially taught
+  - Not taught
+- Time‑restricted logging
+- Attendance‑linked
+- Teaching progress auto‑calculated
+- HOD & admin oversight
+- Full audit trail (no silent edits)
+
+---
+
+### 7.3 Attendance Registers
+- Class attendance (primary)
+- Subject attendance (derived)
+- Absence thresholds
+- Parent visibility
+- Integrated with discipline rules
+
+---
+
+### 7.4 Continuous Assessment (CA)
+- Marks recorded per sequence
+- Automatic totals & averages
+- Locked after deadlines
+- All changes logged
+- Approval required for overrides
+
+---
+
+### 7.5 Discipline Records
+- Digital incident logging
+- Linked to student profile
+- Escalation rules
+- Parent read‑only visibility
+- Included in inspection reports
+
+---
+
+### 7.6 Report Cards
+- Automatic generation
+- School‑specific PDF templates
+- Teacher comments
+- Attendance summaries
+- Admin approval required before release
+- Permanently archived
+
+---
+
+### 7.7 Teacher Contracts & Staff Files
+- Contract created during onboarding
+- Digital signing by teacher
+- Status:
+  - Pending
+  - Signed
+- Teaching permissions blocked until signed
+- Full staff compliance history maintained
+
+---
+
+### 7.8 Fees & Payments
+- Fee structure definition
+- Student balances
+- Parent payments
+- Digital receipts
+- Financial reports & exports
+
+---
+
+### 7.9 Parent Communication
+- Announcements
+- Academic warnings
+- Discipline notices
+- Fee notifications
+- Read receipts for accountability
+
+---
+
+### 7.10 Inspection & Supervision
+- Teaching coverage reports
+- Attendance statistics
+- Discipline summaries
+- Teacher compliance reports
+- Exportable inspection packs (PDF / print‑ready)
+
+---
+
+## 8. PARENT & STUDENT EXPERIENCE
+
+### 8.1 Parent
+- One account → multiple children
+- Children may belong to:
+  - Different classes
+  - Different sections
+  - Different schools
+- Real‑time visibility:
+  - Attendance
+  - Grades
+  - Discipline
+  - Fees
+
+---
+
+### 8.2 Student
+- Read‑only access to:
+  - Timetable
+  - Results
+  - Attendance status
+  - Discipline status
+
+---
+
+## 9. NON‑FUNCTIONAL REQUIREMENTS
+
+- Multi‑tenant architecture
+- Strict role‑based access control (RBAC)
+- Horizontal & vertical scalability
+- Full audit logging across all modules
+- Frontend‑agnostic backend
+- Async‑ready (PDFs, notifications, exports)
+- Strong data isolation per school
+
+---
+
+## 10. EXPLICITLY OUT OF SCOPE (FOR NOW)
+
+- Primary schools
+- AI grading
+- Computer vision marking
+- Payroll
+- Government system integrations
+- Mobile applications
+- Offline mode
+
+---
+
+## 11. PRD STATUS
+
+✅ FINAL  
+✅ LOCKED  
+✅ APPROVED BY TEAM  
+
+No feature may be added unless it directly replaces or improves a real, existing school paperwork process.

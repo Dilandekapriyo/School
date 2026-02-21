@@ -1,0 +1,238 @@
+# SKOLA — APP FLOW
+
+**Status:** FINAL · LOCKED · IMPLEMENTATION‑READY
+
+---
+
+## 0. ENTRY POINT (ALL USERS)
+
+**Flow**
+
+Login → Role Detection → Active Role Selection → Redirect
+
+A user may have multiple roles (e.g. Teacher + HOD + Parent).
+
+After login, the user selects:
+- Active School
+- Active Role
+- Active Section (if school is bilingual)
+
+The system dynamically loads permissions based on the selected context.
+
+---
+
+## 1. SCHOOL REGISTRATION & INITIAL SETUP (ONE‑TIME)
+
+**Actor:** School Owner / Initial Admin
+
+### Flow
+
+1. Register school
+2. Select school type:
+   - English
+   - French
+   - Bilingual
+3. System auto‑creates:
+   - School entity
+   - Academic Sections (English / French if bilingual)
+4. Complete school profile:
+   - Address
+   - Academic calendar defaults
+5. Create initial admin roles:
+   - Principal
+   - Vice Principal
+   - Bursar (optional)
+
+➡️ System transitions to **normal operations mode**
+
+---
+
+## 2. PRINCIPAL / SUPER ADMIN FLOW
+
+### Dashboard
+- School overview
+- Section overview (English / French)
+- Global alerts:
+  - Attendance gaps
+  - Discipline trends
+  - Teaching delays
+  - Financial summaries
+
+### Core Actions
+- Create & manage admins
+- Assign roles & permissions
+- View reports:
+  - Academic performance
+  - Teaching coverage
+  - Discipline
+  - Attendance
+  - Fees
+- Approve:
+  - Report cards
+  - Major overrides
+  - Locked actions
+- Generate **Inspection Pack** (PDF / print‑ready)
+
+---
+
+## 3. VICE PRINCIPAL FLOW
+
+### Dashboard
+- Academic snapshot
+- Discipline snapshot
+- Section‑filtered visibility
+
+### Core Actions
+- Supervise:
+  - Attendance
+  - Discipline
+  - Teaching progress
+- Review flagged issues
+- Escalate unresolved issues to Principal
+
+---
+
+## 4. HEAD OF DEPARTMENT (HOD) FLOW (PER SUBJECT)
+
+### Dashboard
+- Subject‑level progress
+- Classes under department
+- Teacher compliance status
+
+### Core Actions
+- Create Scheme of Work:
+  - Per class
+  - Per academic session
+- Lock scheme after approval
+- Monitor:
+  - Digital Cahier de Texte
+  - Planned vs taught lessons
+- Review teacher lesson logs
+- Flag:
+  - Delays
+  - Inconsistencies
+  - Non‑compliance
+
+---
+
+## 5. CLASS MASTER FLOW (PER CLASS)
+
+### Dashboard
+- Class summary
+- Attendance alerts
+- Discipline alerts
+
+### Core Actions
+- Monitor class attendance
+- Monitor discipline records
+- View academic performance summaries
+- Communicate with parents:
+  - Class‑wide announcements
+
+---
+
+## 6. TEACHER FLOW
+
+### Dashboard
+- Assigned classes & subjects
+- Today’s timetable
+- Pending actions
+
+### Core Actions
+- Take attendance
+- Log lessons (Digital Cahier de Texte):
+  - Confirm planned lesson
+  - Mark status:
+    - Taught
+    - Partially taught
+    - Not taught
+  - Optional short comment
+- Enter continuous assessment marks
+- Upload assignments
+- Comment on report cards
+- Sign contract (if pending)
+
+### Restrictions
+⚠️ Teaching, grading, and attendance permissions are limited until the contract is signed.
+
+---
+
+## 7. BURSAR / FINANCE FLOW
+
+### Dashboard
+- Fee overview
+- Outstanding balances
+- Payment trends
+
+### Core Actions
+- Define fee structures
+- Record payments
+- Issue digital receipts
+- Generate financial reports
+
+---
+
+## 8. PARENT FLOW
+
+### Dashboard
+- All linked children (across multiple schools if applicable)
+- Alerts & notifications
+
+### Core Actions
+- View:
+  - Attendance
+  - Results
+  - Discipline
+  - Fees
+- Pay fees (if enabled)
+- Download report cards
+- Receive official school communications
+
+⚠️ Parents are **read‑only** for academic data.
+
+---
+
+## 9. STUDENT FLOW (READ‑ONLY)
+
+- View timetable
+- View results
+- View attendance status
+- View discipline status
+
+---
+
+## 10. INSPECTION / AUDIT FLOW (ADMIN‑ONLY)
+
+### One‑Click Reports
+- Teaching coverage
+- Attendance statistics
+- Discipline summaries
+- Staff compliance
+- Academic performance
+
+### Export Options
+- PDF
+- Print‑ready formats
+
+---
+
+## 11. GLOBAL RULES (APPLIES EVERYWHERE)
+
+- Role‑based access control (RBAC)
+- Section‑aware navigation
+- School‑scoped data only
+- Full audit logging
+- Time‑restricted actions
+- No silent edits
+- Locked resources cannot be modified
+
+---
+
+## FINAL CONFIRMATION
+
+✔ Parents included and clearly scoped  
+✔ Contracts enforced in teacher flow  
+✔ Bilingual separation respected  
+✔ Multi‑admin reality reflected  
+✔ Matches backend schema & API conventions  
+✔ Safe for frontend and backend teams

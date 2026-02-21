@@ -1,0 +1,381 @@
+# MASTER COPILOT PROMPTS — BACKEND ONLY (LOCKED)
+
+**Status:** FINAL  
+**Scope:** Backend only (100% complete)  
+**Out of Scope:** Frontend  
+
+---
+
+## DESIGN GOALS (NON‑NEGOTIABLE)
+
+- No hallucinations
+- No circular dependencies
+- No migration conflicts
+- No mid‑build refactors
+- All components must work together at completion
+
+---
+
+## 🔴 PROMPT 0 — ABSOLUTE MASTER CONTROL (PASTE FIRST, ONCE)
+
+Paste this prompt **once** into Copilot Chat.  
+**Do not modify it later.**
+
+You are a senior Django backend engineer building a production‑grade school management system for secondary schools.
+
+---
+
+## PROJECT RULES (MANDATORY)
+
+- Follow the **FINAL PRD** exactly  
+- Follow the **FINAL Backend Schema** exactly  
+- Follow the **API Conventions** document exactly  
+- Follow the provided **Django App Structure** exactly  
+- Use **Django REST Framework**
+- Use **PostgreSQL** (no SQLite assumptions)
+- Use **UUID primary keys** for all models
+- Use **soft deletes only** (`is_deleted`)
+- Enforce multi‑tenancy using `X-SCHOOL-ID`
+- Never allow cross‑school data access
+- Enforce permissions in **views/viewsets only**
+- Never enforce permissions in serializers
+- No business logic in views
+- All business logic lives in `services/`
+- Models contain **data only**
+- Do not invent models, fields, or relationships
+- Do not rename, merge, or restructure apps
+- Do not auto‑create demo data
+- If anything is unclear, **STOP and ASK**
+
+---
+
+## ARCHITECTURAL RULES
+
+- No circular imports
+- No cross‑app service imports
+- Services may depend only on:
+  - Models
+  - Utilities
+- Views orchestrate services only
+- Serializers validate input/output only
+
+---
+
+## GOAL
+
+Deliver a complete, inspection‑ready backend with **zero refactors required later**.
+
+---
+
+## 🟠 PHASE 1 — PROJECT & CORE FOUNDATION (NO BUSINESS LOGIC)
+
+### Prompt 1.1 — Project & Settings
+
+Create a Django project with:
+
+- Settings split: `base.py`, `dev.py`, `prod.py`
+- PostgreSQL via environment variables
+- Django REST Framework installed
+- JWT authentication (access + refresh)
+- Custom User model enabled
+- CORS support enabled
+- Environment‑based secret handling
+
+**Do not create apps.**  
+**Do not write business logic.**
+
+---
+
+### Prompt 1.2 — Common App
+
+Create a `common` app containing:
+
+**BaseModel**
+- `id` (UUID)
+- `created_at`
+- `updated_at`
+- `is_deleted`
+
+**Also include:**
+- Standard API response helpers
+- Global pagination class
+- Middleware enforcing:
+  - `X-SCHOOL-ID` header
+  - User belongs to school
+
+No business logic.
+
+---
+
+## 🟠 PHASE 2 — CORE SCHOOL & ACADEMIC CALENDAR
+
+### Prompt 2.1 — Core Models
+
+Create the `core` app with:
+
+- School
+- AcademicSection (English / French)
+- AcademicSession
+- Term
+- Sequence
+
+**Rules:**
+- All models inherit `BaseModel`
+- AcademicSection exists only for bilingual schools
+- Terms belong to AcademicSession
+- Sequences belong to Term
+- 1–6 sequences per year
+- No business logic
+
+---
+
+### Prompt 2.2 — Core APIs
+
+Create serializers, viewsets, and URLs.
+
+**Rules:**
+- Enforce `X-SCHOOL-ID`
+- Admins: full CRUD
+- Non‑admins: read‑only
+- Soft delete only
+
+---
+
+## 🟠 PHASE 3 — USERS, ROLES & PERMISSIONS (CRITICAL)
+
+### Prompt 3.1 — User & Access Models
+
+Create the `users` app with:
+
+- User (email‑based auth)
+- Role
+- Permission
+- RolePermission
+- SchoolUser
+
+**Rules:**
+- Users may belong to multiple schools
+- Users may have multiple roles per school
+- Roles are permission‑based, not title‑based
+
+---
+
+### Prompt 3.2 — Permission Engine
+
+- Permissions are string‑based (e.g. `academic.enter_marks`)
+- Checked only in views/viewsets
+- Always school‑scoped
+- Deny access if permission missing
+
+---
+
+## 🟠 PHASE 4 — STUDENTS & PARENTS
+
+### Prompt 4.1 — Models
+
+Create the `students` app with:
+
+- Student
+- Enrollment
+- Parent
+- ParentStudent (link table)
+
+**Rules:**
+- Parents may have multiple students
+- Students belong to one school per enrollment
+- Parents may view students across schools
+
+---
+
+### Prompt 4.2 — APIs
+
+Create APIs for:
+
+- Student registration
+- Enrollment management
+- Parent linking
+
+**Rules:**
+- Admins create students
+- Parents are read‑only
+- Parents never modify academic data
+
+---
+
+## 🟠 PHASE 5 — ACADEMICS
+
+### Prompt 5.1 — Models
+
+Create the `academics` app with:
+
+- SchoolClass
+- Subject (section‑aware)
+- TeacherAssignment
+- SchemeOfWork
+- SchemeItem
+- LessonLog (Cahier de Texte)
+
+**Rules:**
+- Subjects are section‑aware
+- HOD owns SchemeOfWork
+- LessonLogs reference SchemeItems
+
+---
+
+### Prompt 5.2 — Business Logic
+
+Implement services for:
+
+- Teacher assignments
+- Scheme approval & locking
+- Lesson logging only on approved schemes
+- Prevent backdated/fake lessons
+
+---
+
+##  PHASE 6 — ATTENDANCE & DISCIPLINE
+
+### Prompt 6.1 — Attendance
+
+- Attendance per student per day
+- Teachers mark only assigned classes
+- Attendance affects discipline thresholds
+
+---
+
+### Prompt 6.2 — Discipline
+
+- DisciplineRecord with approval workflow
+- Records immutable after approval
+- Parent read‑only visibility
+
+---
+
+##  PHASE 7 — ASSESSMENT & REPORT CARDS
+
+### Prompt 7.1 — Models
+
+Create the `assessment` app with:
+
+- Assessment
+- Score
+- GradingRule
+- ReportCard
+
+---
+
+### Prompt 7.2 — Logic
+
+Implement services for:
+
+- Score entry
+- Auto calculations
+- Deadline locking
+- Report card generation (PDF‑ready, async‑safe)
+
+---
+
+##  PHASE 8 — FINANCE & PAYMENTS
+
+### Prompt 8.1 — Models
+
+Create the `finance` app with:
+
+- FeeStructure
+- StudentBalance
+- Payment
+
+**Rules:**
+- Payments are immutable
+- Balances auto‑update
+
+---
+
+### Prompt 8.2 — APIs
+
+- Fee configuration
+- Payment recording
+- Parent payment views
+
+---
+
+##  PHASE 9 — STAFF CONTRACTS
+
+### Prompt 9.1 — Contracts
+
+Create the `contracts` app with:
+
+- TeacherContract
+- Digital signing flow
+- Immutable signed status
+- Teaching blocked until signed
+
+---
+
+## PHASE 10 — NOTIFICATIONS
+
+### Prompt 10.1 — Notifications
+
+- Admin → parent/teacher messaging
+- Read/unread tracking
+- School‑scoped delivery
+
+---
+
+##  PHASE 11 — AUDIT & COMPLIANCE
+
+### Prompt 11.1 — Audit Logging
+
+Audit the following actions:
+
+- CREATE
+- UPDATE
+- DELETE
+- APPROVAL
+- OVERRIDE
+
+Logs store:
+- user
+- school
+- action
+- model
+- object_id
+- timestamp
+
+---
+
+##  PHASE 12 — FINAL HARDENING
+
+### Prompt 12.1 — System Review
+
+Ensure:
+
+- No cross‑school data leakage
+- Permissions enforced everywhere
+- Indexes on frequent queries
+- Soft deletes respected globally
+- All services covered
+
+---
+
+## EXECUTION RULES
+
+- Paste **one prompt at a time**
+- Let Copilot complete generation
+- Run migrations
+- Run server
+- Commit
+- Move to next prompt
+
+🚫 Never jump phases  
+🚫 Never mix prompts  
+
+---
+
+##  END RESULT
+
+- 100% working backend
+- Inspection‑ready
+- Cameroon‑aware
+- Horizontally & vertically scalable
+- Frontend can plug in cleanly
